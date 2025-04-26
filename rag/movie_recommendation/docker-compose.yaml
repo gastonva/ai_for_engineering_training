@@ -1,0 +1,35 @@
+name: 'rag-movie-recommendation'
+services:
+  db:
+    image: postgres:17
+    user: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: movie-recommendation
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "$POSTGRES_USER", "-d", "$POSTGRES_DB"]
+      interval: 5s
+      retries: 5
+    restart: always
+
+  vectordb:
+    image: pgvector/pgvector:pg17
+    container_name: pgvector-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: movie-vector-db 
+    ports:
+      - "15432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  postgres-db-volume:
+  pgdata:
