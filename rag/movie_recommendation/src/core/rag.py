@@ -96,10 +96,10 @@ class RAG:
             for doc in result["context"]
         ]
 
-        response = {
+        return {
             "input": query,
             "context": context_documents,
             "answer": result["answer"],
         }
 
-        return response
+

@@ -62,5 +62,6 @@ venv/
 
 # DB
 app.db
-.venv/
+
+# Numpy
 *.npy
