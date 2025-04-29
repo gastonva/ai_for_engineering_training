@@ -8,6 +8,7 @@ class ProjectSettings(BaseSettings):
     DBConnection: str | None = None
     CollectionName: str | None = None
     API_KEY: str | None = None
+    TAVILY_API_KEY: str | None = None
     AccessTokenExpiresMinutes: int | None = None
     JWTSigningKey: str | None = None
     AcceptCookie: bool = True

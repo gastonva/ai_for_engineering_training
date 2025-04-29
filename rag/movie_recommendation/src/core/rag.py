@@ -101,5 +101,3 @@ class RAG:
             "context": context_documents,
             "answer": result["answer"],
         }
-
-
