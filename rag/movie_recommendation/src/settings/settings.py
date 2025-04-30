@@ -13,6 +13,9 @@ class ProjectSettings(BaseSettings):
     JWTSigningKey: str | None = None
     AcceptCookie: bool = True
     AcceptToken: bool = True
+    LangfuseSecretKey: str | None = None
+    LangfusePublicKey: str | None = None
+    LangfuseHost: str | None = None
 
 
 settings = ProjectSettings()

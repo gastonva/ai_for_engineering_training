@@ -61,6 +61,7 @@ class Agent:
 
 class SearchAgent:
     tools = [TavilySearch(max_results=4, tavily_api_key=settings.TAVILY_API_KEY)]
+    llm = ChatOpenAI(api_key=settings.API_KEY, model="o4-mini")
 
     @classmethod
     def search(cls, query: str) -> str:
@@ -69,8 +70,7 @@ class SearchAgent:
             "search for the answer using the Tavily search engine. "
             "You will return the results in a structured format."
         )
-        llm = ChatOpenAI(api_key=settings.API_KEY, temperature=0)
-        agent = Agent(cls.tools, llm, system_prompt)
+        agent = Agent(cls.tools, cls.llm, system_prompt)
         user_search = [HumanMessage(content=query)]
         result = agent.graph.invoke({"messages": user_search})
         return result["messages"][-1].content
