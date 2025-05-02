@@ -4,6 +4,7 @@ from langfuse.callback import CallbackHandler
 from langfuse.client import StatefulTraceClient
 from src.settings.settings import settings
 
+
 class LangfuseProvider:
     _instance: Langfuse | None = None
 
@@ -16,11 +17,11 @@ class LangfuseProvider:
                 host=settings.LangfuseHost,
             )
         return cls._instance
-    
+
     @classmethod
-    def get_callback_handler(cls) -> CallbackHandler:
-        return CallbackHandler()
-    
+    def get_callback_handler(cls, user_id: str) -> CallbackHandler:
+        return CallbackHandler(session_id=str(uuid4()), user_id=user_id)
+
     @classmethod
     def create_trace(cls, name: str) -> StatefulTraceClient:
         """

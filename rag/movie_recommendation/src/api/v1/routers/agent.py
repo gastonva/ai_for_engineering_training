@@ -17,4 +17,4 @@ def search_movies(
     Search for movies based on user query.
     """
 
-    return AgentService.search_movies(body.query)
+    return AgentService.search_movies(body.query, str(user.id))

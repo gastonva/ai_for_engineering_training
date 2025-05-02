@@ -2,14 +2,16 @@ from uuid import UUID
 from src.core.rag import RAG
 from src.repositories.chat import ChatRepository
 from sqlalchemy.orm import Session
+from langfuse.decorators import observe
 
 
 class ChatService:
     def __init__(self, session: Session):
         self.repository = ChatRepository(session)
 
+    @observe(name="services.chat")
     def chat(self, query: str, user_id: UUID, session_id: UUID | None) -> dict:
-        rag = RAG()
+        rag = RAG(str(user_id))
 
         filters = self.repository.build_filters(
             {
