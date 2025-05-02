@@ -2,6 +2,7 @@ from uuid import UUID, uuid4
 
 from sqlalchemy import JSON, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column
+
 from src.db.base_class import Base
 
 

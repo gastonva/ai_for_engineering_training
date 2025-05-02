@@ -16,6 +16,9 @@ class ProjectSettings(BaseSettings):
     LangfuseSecretKey: str | None = None
     LangfusePublicKey: str | None = None
     LangfuseHost: str | None = None
+    SERPER_API_KEY: str | None = None
+    SerperURL: str | None = None
+    SearchSources: list[str] | None = None
 
 
 settings = ProjectSettings()

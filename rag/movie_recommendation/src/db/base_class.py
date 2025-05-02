@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from humps import decamelize
-from sqlalchemy import func, MetaData
+from sqlalchemy import MetaData, func
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column

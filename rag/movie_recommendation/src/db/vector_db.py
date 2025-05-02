@@ -1,5 +1,6 @@
 from langchain_community.vectorstores import PGVector
 from langchain_core.embeddings import Embeddings
+
 from src.settings.settings import settings
 
 

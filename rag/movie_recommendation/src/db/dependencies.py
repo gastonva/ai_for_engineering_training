@@ -1,9 +1,9 @@
 from typing import Generator
 
-from fastapi import Request
+from fastapi import Depends, Request
 from sqlalchemy import NullPool
-from sqlalchemy.orm import scoped_session, Session
-from fastapi import Depends
+from sqlalchemy.orm import Session, scoped_session
+
 from src.core.auth_manager import AuthManager
 from src.db.session import SingletonDB
 from src.models.user import User

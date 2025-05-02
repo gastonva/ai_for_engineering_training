@@ -1,14 +1,21 @@
-from typing import TypedDict, Annotated
-from langchain_tavily import TavilySearch
-from langgraph.graph import StateGraph, END
-from langgraph.graph.message import add_messages
-from langchain_core.messages import SystemMessage, ToolMessage, HumanMessage
-from langchain_openai import ChatOpenAI
-from src.settings.settings import settings
+import inspect
 import logging
-from src.monitoring.langfuse_provider import LangfuseProvider
-from langfuse.decorators import observe
 import os
+from typing import Annotated, TypedDict
+from uuid import uuid4
+
+from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
+from langchain_mcp_adapters.tools import load_mcp_tools
+from langchain_openai import ChatOpenAI
+from langchain_tavily import TavilySearch
+from langfuse.decorators import observe
+from langgraph.graph import END, StateGraph
+from langgraph.graph.message import add_messages
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+from src.monitoring.langfuse_provider import LangfuseProvider
+from src.settings.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -55,10 +62,9 @@ class Agent:
         message = self.model.invoke(messages)
         return {"messages": [message]}
 
-    def take_action(self, state: AgentState):
+    async def take_action(self, state: AgentState):
         tool_calls = state["messages"][-1].tool_calls
         results = []
-        self.langfuse_callback_handler.on_tool_start({"name": t["name"]}, t["args"])
         for t in tool_calls:
             logger.info(f"Calling: {t}")
             if not t["name"] in self.tools:
@@ -66,8 +72,18 @@ class Agent:
                 result = "bad tool name, retry"
                 self.langfuse_callback_handler.on_tool_end(result)
             else:
-                result = self.tools[t["name"]].invoke(t["args"])
-                self.langfuse_callback_handler.on_tool_end(result)
+                self.langfuse_callback_handler.on_tool_start(
+                    {"name": t["name"]}, t["args"], run_id=uuid4()
+                )
+                tool = self.tools[t["name"]]
+                args = t["args"]
+                if hasattr(tool, "ainvoke") and callable(getattr(tool, "ainvoke")):
+                    result = await tool.ainvoke(args)
+                elif inspect.iscoroutinefunction(tool):
+                    result = await tool(args)
+                else:
+                    result = tool.invoke(args)
+                self.langfuse_callback_handler.on_tool_end(result, run_id=uuid4())
             results.append(
                 ToolMessage(tool_call_id=t["id"], name=t["name"], content=str(result))
             )
@@ -76,11 +92,17 @@ class Agent:
 
 
 class SearchAgent:
+    # Setup the MCP client
+    server_params = StdioServerParameters(
+        command="python",
+        args=["./src/mcp_servers/movie_search_server.py"],
+    )
+
     tools = [TavilySearch(max_results=4, tavily_api_key=settings.TAVILY_API_KEY)]
 
     @classmethod
     @observe(name="search_agent.search", as_type="tool")
-    def search(cls, query: str, user_id: str) -> str:
+    async def search(cls, query: str, user_id: str) -> str:
         llm = ChatOpenAI(
             api_key=settings.API_KEY,
             model="o4-mini",
@@ -91,7 +113,16 @@ class SearchAgent:
             "search for the answer using the Tavily search engine. "
             "You will return the results in a structured format."
         )
-        agent = Agent(cls.tools, llm, system_prompt, user_id)
-        user_search = [HumanMessage(content=query)]
-        result = agent.graph.invoke({"messages": user_search})
+        async with stdio_client(cls.server_params) as (read, write):
+            async with ClientSession(read, write) as session:
+                # Initialize the connection
+                await session.initialize()
+
+                # Get tools
+                mcp_tools = await load_mcp_tools(session)
+                if mcp_tools:
+                    cls.tools.extend(mcp_tools)
+                agent = Agent(cls.tools, llm, system_prompt, user_id)
+                user_search = [HumanMessage(content=query)]
+                result = await agent.graph.ainvoke({"messages": user_search})
         return result["messages"][-1].content

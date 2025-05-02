@@ -1,6 +1,7 @@
 from typing import Any, TypeVar
 
 from sqlalchemy.ext.declarative import DeclarativeMeta
+
 from src.db.base_class import Base
 
 ModelType = TypeVar("ModelType", bound=Base)

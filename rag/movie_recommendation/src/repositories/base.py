@@ -13,6 +13,7 @@ from typing import Any, Callable, Literal, Optional, cast, no_type_check
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+
 from src.schemas.types import Model, ModelType
 
 

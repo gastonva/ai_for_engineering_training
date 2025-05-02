@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+
 from src.core.auth_manager import PasswordManager
 from src.models import User
 from src.repositories.user import UserRepository

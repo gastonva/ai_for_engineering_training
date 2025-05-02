@@ -1,7 +1,9 @@
 from uuid import uuid4
+
 from langfuse import Langfuse
 from langfuse.callback import CallbackHandler
 from langfuse.client import StatefulTraceClient
+
 from src.settings.settings import settings
 
 

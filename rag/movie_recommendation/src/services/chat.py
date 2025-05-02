@@ -1,8 +1,10 @@
 from uuid import UUID
+
+from langfuse.decorators import observe
+from sqlalchemy.orm import Session
+
 from src.core.rag import RAG
 from src.repositories.chat import ChatRepository
-from sqlalchemy.orm import Session
-from langfuse.decorators import observe
 
 
 class ChatService:

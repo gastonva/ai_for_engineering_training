@@ -7,6 +7,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
+
 from src.models import User
 from src.repositories.user import UserRepository
 from src.schemas import Token, TokenPayload

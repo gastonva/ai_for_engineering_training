@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Body, Depends
-from src.db.dependencies import get_user, get_session
 from sqlalchemy.orm import Session
-from src.schemas import ChatAnswer, ChatQuery, ChatHistory
-from src.services.chat import ChatService
 
+from src.db.dependencies import get_session, get_user
 from src.models.user import User
+from src.schemas import ChatAnswer, ChatHistory, ChatQuery
+from src.services.chat import ChatService
 
 router = APIRouter()
 

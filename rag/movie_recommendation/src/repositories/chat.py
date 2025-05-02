@@ -1,6 +1,7 @@
 from sqlalchemy import and_
-from src.repositories.base import ModelRepository
+
 from src.models.chat_session import ChatSession
+from src.repositories.base import ModelRepository
 
 
 class ChatRepository(ModelRepository):

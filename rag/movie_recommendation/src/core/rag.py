@@ -1,17 +1,17 @@
-from langchain.chains import create_retrieval_chain, create_history_aware_retriever
+import os
+
+from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.vectorstores import VectorStoreRetriever
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, AIMessage
-from langchain_core.prompts import MessagesPlaceholder
-from src.db.vector_db import VectorStoreProvider
-from src.settings.settings import settings
 from langfuse.decorators import observe
-from src.monitoring.langfuse_provider import LangfuseProvider
 
-import os
+from src.db.vector_db import VectorStoreProvider
+from src.monitoring.langfuse_provider import LangfuseProvider
+from src.settings.settings import settings
 
 os.environ["LANGFUSE_PUBLIC_KEY"] = settings.LangfusePublicKey
 os.environ["LANGFUSE_SECRET_KEY"] = settings.LangfuseSecretKey

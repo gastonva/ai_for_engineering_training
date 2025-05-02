@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Body, Depends, Response
 from sqlalchemy.orm import Session
+
 from src.core.auth_manager import AuthManager
 from src.db.dependencies import get_session
 from src.schemas.user import Token, UserSignupInput

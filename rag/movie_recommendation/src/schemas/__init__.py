@@ -1,3 +1,3 @@
+from .agent import AgentResponse, UserQueryForAgent
+from .chat import ChatAnswer, ChatHistory, ChatQuery
 from .user import Token, TokenPayload, UserSignupInput, UserSignupOutput
-from .chat import ChatAnswer, ChatQuery, ChatHistory
-from .agent import UserQueryForAgent, AgentResponse
